@@ -3,12 +3,17 @@ A tool to make developing &amp; distributing linux flutter apps, code taken from
 
 
 ## Install
+
+```
 flutter pub global activate --source git https://github.com/easion/flutter_pack.git
 export PATH="$PATH":"$HOME/.pub-cache/bin"
 dart pub global list
+```
 
 ## Remove
+```
 dart pub global deactivate flutter_pack
+```
 
 
 ## Example usage
