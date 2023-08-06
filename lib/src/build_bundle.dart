@@ -93,8 +93,8 @@ class FlutterpiCache extends FlutterCache {
     super.registerArtifact(artifactSet);
   }
 
-  final flutterPiEngineCi = gh.RepositorySlug('easion', 'flutter_gix');
-  final flutterpiCiBaseUrl = 'https://github.com/easion/flutter_gix/'; 
+  final flutterPiEngineCi = gh.RepositorySlug('easion', 'flutter_pack');
+  final flutterpiCiBaseUrl = 'https://github.com/easion/flutter_pack/'; 
 
   late final ArtifactUpdater _artifactUpdater = _createUpdater();
 
@@ -146,11 +146,10 @@ class FlutterpiCache extends FlutterCache {
       }
 
       if (await artifact.isUpToDate(_fileSystem)) {
-		print("-------isUpToDate is ${flutterpiPlatforms}---------------");
         continue;
       }
 
-	  print("-------artifact.update---------------");
+	  print("-------artifact.update ${flutterpiPlatforms}---------------");
       await artifact.update(
         _artifactUpdater,
         _logger,
@@ -316,8 +315,6 @@ sealed class FlutterpiEngineCIArtifact extends EngineCachedArtifact {
     } on gh.ReleaseNotFound {
       throwToolExit('Flutter engine binaries for engine $version are not available .');
     }
-
-	print("-------updateInner--------------");
 
     for (final List<String> dirs in getBinaryDirs()) {
       final cacheDir = dirs[0];
