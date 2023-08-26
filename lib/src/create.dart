@@ -75,7 +75,8 @@ class FlutterpiCachedCreateAppArtifacts implements Artifacts {
   }
 
   @override
-  String getEngineType(TargetPlatform platform, [BuildMode? mode]) => parent.getEngineType(platform, mode);
+  String getEngineType(TargetPlatform platform, [BuildMode? mode]) =>
+      parent.getEngineType(platform, mode);
 
   @override
   bool get isLocalEngine => parent.isLocalEngine;
@@ -124,7 +125,8 @@ class CreatePackageCommand extends Command<int> {
     }
   }
 
-  void copyFileToProjectDir(Directory cachedir, Directory projectDir, String filename) {
+  void copyFileToProjectDir(
+      Directory cachedir, Directory projectDir, String filename) {
     final cachedMakefile = io.File(path.join(cachedir.path, filename));
     final projectMakefile = io.File(path.join(projectDir.path, filename));
 
@@ -149,7 +151,8 @@ class CreatePackageCommand extends Command<int> {
   Future<void> setFileExecutable(String filePath) async {
     final isLinuxOrMac = io.Platform.isLinux || io.Platform.isMacOS;
     if (!isLinuxOrMac) {
-      print('Currently only supports setting file permissions on Linux and Mac.');
+      print(
+          'Currently only supports setting file permissions on Linux and Mac.');
       return;
     }
     var file = io.File(filePath);
@@ -193,8 +196,11 @@ class CreatePackageCommand extends Command<int> {
           final Directory projectDir = project.directory;
           print('Project name: $projectName');
           print('Project path: ${projectDir.path}');
-          final cachedir =
-              globals.cache.getRoot().childDirectory('artifacts').childDirectory('engine').childDirectory('sample_app');
+          final cachedir = globals.cache
+              .getRoot()
+              .childDirectory('artifacts')
+              .childDirectory('engine')
+              .childDirectory('sample_app');
           //print("------CACHE DIR: -${cachedir.path}------");
 
           if (!cachedir.existsSync()) {
@@ -218,17 +224,16 @@ class CreatePackageCommand extends Command<int> {
           for (final filePath in filesToMakeExecutable) {
             if (io.File(filePath).existsSync()) {
               await setFileExecutable(filePath);
-            } else {
-            }
+            } else {}
           }
 
           copyFileToProjectDir(cachedir, projectDir, 'Makefile');
           final projname = replaceUnderscoreWithDash(projectName);
-		  final debugIp = '192.168.16.136';
-		  final debugPort = '22';
-		  final projVer = '1.0';
+          final debugIp = '192.168.16.136';
+          final debugPort = '22';
+          final projVer = '1.0';
 
-		  String content = '''
+          String content = '''
 			APPNAME=${projname}
 			APPVERSION=${projVer}
 			DEBUG_IP=${debugIp}
@@ -243,7 +248,8 @@ class CreatePackageCommand extends Command<int> {
           if (e.message != null) {
             globals.printError(e.message!);
           }
-          return exitWithHooks(e.exitCode ?? 1, shutdownHooks: globals.shutdownHooks);
+          return exitWithHooks(e.exitCode ?? 1,
+              shutdownHooks: globals.shutdownHooks);
         }
       },
     );

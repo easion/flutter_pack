@@ -81,7 +81,8 @@ sealed class FlutterpiEngineCIArtifact extends EngineCachedArtifact {
     }
 
     for (final List<String> toolsDir in getBinaryDirs()) {
-      final Directory dir = fileSystem.directory(fileSystem.path.join(location.path, toolsDir[0]));
+      final Directory dir = fileSystem
+          .directory(fileSystem.path.join(location.path, toolsDir[0]));
       if (!dir.existsSync()) {
         return false;
       }
@@ -90,7 +91,8 @@ sealed class FlutterpiEngineCIArtifact extends EngineCachedArtifact {
     }
 
     for (final String licenseDir in getLicenseDirs()) {
-      final File file = fileSystem.file(fileSystem.path.join(location.path, licenseDir, 'LICENSE'));
+      final File file = fileSystem
+          .file(fileSystem.path.join(location.path, licenseDir, 'LICENSE'));
       if (!file.existsSync()) {
         return false;
       }
@@ -101,7 +103,9 @@ sealed class FlutterpiEngineCIArtifact extends EngineCachedArtifact {
   Future<gh.Release> findGithubReleaseByEngineHash(String hash) async {
     var tagName = 'engine/$hash';
     print("------EngineHash ${hash}-------");
-    return await gh.GitHub().repositories.getReleaseByTagName(cache.flutterPiEngineCi, tagName);
+    return await gh.GitHub()
+        .repositories
+        .getReleaseByTagName(cache.flutterPiEngineCi, tagName);
   }
 
   @override
@@ -114,21 +118,25 @@ sealed class FlutterpiEngineCIArtifact extends EngineCachedArtifact {
     try {
       ghRelease = await findGithubReleaseByEngineHash(version!);
     } on gh.ReleaseNotFound {
-      throwToolExit('Flutter engine binaries for engine $version are not available .');
+      throwToolExit(
+          'Flutter engine binaries for engine $version are not available .');
     }
 
     for (final List<String> dirs in getBinaryDirs()) {
       final cacheDir = dirs[0];
       final urlPath = dirs[1];
 
-      final ghAsset =
-          ghRelease.assets!.cast<gh.ReleaseAsset?>().singleWhere((asset) => asset!.name == urlPath, orElse: () => null);
+      final ghAsset = ghRelease.assets!
+          .cast<gh.ReleaseAsset?>()
+          .singleWhere((asset) => asset!.name == urlPath, orElse: () => null);
       if (ghAsset == null) {
-        throwToolExit('Flutter engine binaries with version $version and target $urlPath are not available.');
+        throwToolExit(
+            'Flutter engine binaries with version $version and target $urlPath are not available.');
       }
 
       final downloadUrl = ghAsset.browserDownloadUrl!;
-      final destDir = fileSystem.directory(fileSystem.path.join(location.path, cacheDir));
+      final destDir =
+          fileSystem.directory(fileSystem.path.join(location.path, cacheDir));
 
       print("======downloadUrl ${downloadUrl} to ${destDir}=========");
 
@@ -339,7 +347,8 @@ class FlutterpiCache extends FlutterCache {
 
   /// This has to be lazy because it requires FLUTTER_ROOT to be initialized.
   ArtifactUpdater _createUpdater() {
-    print("getDownloadDir --> ${getDownloadDir()}  -- ${flutterPackageBaseUrl} ");
+    print(
+        "getDownloadDir --> ${getDownloadDir()}  -- ${flutterPackageBaseUrl} ");
     return ArtifactUpdater(
       operatingSystemUtils: _osUtils,
       logger: _logger,
@@ -347,7 +356,11 @@ class FlutterpiCache extends FlutterCache {
       tempStorage: getDownloadDir(),
       platform: _platform,
       httpClient: io.HttpClient(),
-      allowedBaseUrls: <String>[storageBaseUrl, cipdBaseUrl, flutterPackageBaseUrl],
+      allowedBaseUrls: <String>[
+        storageBaseUrl,
+        cipdBaseUrl,
+        flutterPackageBaseUrl
+      ],
     );
   }
 
@@ -367,19 +380,26 @@ class FlutterpiCache extends FlutterCache {
     for (final ArtifactSet artifact in _artifacts) {
       final required = switch (artifact) {
         FlutterpiEngineCIArtifact _ => switch (artifact) {
-            FlutterpiEngineBinariesGeneric _ => flutterpackPlatforms.contains(FlutterpiTargetPlatform.genericAArch64) ||
-                flutterpackPlatforms.contains(FlutterpiTargetPlatform.genericArmV7) ||
-                flutterpackPlatforms.contains(FlutterpiTargetPlatform.genericX64),
-            FlutterpiEngineBinariesRK3399 _ => flutterpackPlatforms.contains(FlutterpiTargetPlatform.rk3399),
-            FlutterpiEngineBinariesSampleApp _ => flutterpackPlatforms.contains(FlutterpiTargetPlatform.sample_app),
-            FlutterpiEngineBinariesPi4 _ => flutterpackPlatforms.contains(FlutterpiTargetPlatform.pi4) ||
-                flutterpackPlatforms.contains(FlutterpiTargetPlatform.pi4_64),
+            FlutterpiEngineBinariesGeneric _ => flutterpackPlatforms
+                    .contains(FlutterpiTargetPlatform.genericAArch64) ||
+                flutterpackPlatforms
+                    .contains(FlutterpiTargetPlatform.genericArmV7) ||
+                flutterpackPlatforms
+                    .contains(FlutterpiTargetPlatform.genericX64),
+            FlutterpiEngineBinariesRK3399 _ =>
+              flutterpackPlatforms.contains(FlutterpiTargetPlatform.rk3399),
+            FlutterpiEngineBinariesSampleApp _ =>
+              flutterpackPlatforms.contains(FlutterpiTargetPlatform.sample_app),
+            FlutterpiEngineBinariesPi4 _ =>
+              flutterpackPlatforms.contains(FlutterpiTargetPlatform.pi4) ||
+                  flutterpackPlatforms.contains(FlutterpiTargetPlatform.pi4_64),
           },
         _ => requiredArtifacts.contains(artifact.developmentArtifact),
       };
 
       if (!required) {
-        _logger.printTrace('Artifact $artifact is not required, skipping update.');
+        _logger
+            .printTrace('Artifact $artifact is not required, skipping update.');
         continue;
       }
 
@@ -399,7 +419,8 @@ class FlutterpiCache extends FlutterCache {
   }
 }
 
-Future<void> exitWithHooks(int code, {required ShutdownHooks shutdownHooks}) async {
+Future<void> exitWithHooks(int code,
+    {required ShutdownHooks shutdownHooks}) async {
   // Run shutdown hooks before flushing logs
   await shutdownHooks.runShutdownHooks(globals.logger);
 
@@ -545,7 +566,8 @@ Future<String> getFlutterRoot() async {
   final pkgconfig = await findPackageConfigUri(io.Platform.script);
   pkgconfig!;
 
-  final flutterToolsPath = pkgconfig.resolve(Uri.parse('package:flutter_tools/'))!.toFilePath();
+  final flutterToolsPath =
+      pkgconfig.resolve(Uri.parse('package:flutter_tools/'))!.toFilePath();
   const dirname = path.dirname;
   return dirname(dirname(dirname(flutterToolsPath)));
 }

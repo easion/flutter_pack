@@ -49,11 +49,15 @@ class FlutterpiArtifactPaths {
     };
   }
 
-  String getGenSnapshotFilename(HostPlatform hostPlatform, BuildMode buildMode) {
+  String getGenSnapshotFilename(
+      HostPlatform hostPlatform, BuildMode buildMode) {
     return switch ((hostPlatform, buildMode)) {
-      (HostPlatform.linux_x64, BuildMode.profile) => 'gen_snapshot_linux_x64_profile',
-      (HostPlatform.linux_x64, BuildMode.release) => 'gen_snapshot_linux_x64_release',
-      _ => throw UnsupportedError('Unsupported host platform & build mode combinations: $hostPlatform, $buildMode'),
+      (HostPlatform.linux_x64, BuildMode.profile) =>
+        'gen_snapshot_linux_x64_profile',
+      (HostPlatform.linux_x64, BuildMode.release) =>
+        'gen_snapshot_linux_x64_release',
+      _ => throw UnsupportedError(
+          'Unsupported host platform & build mode combinations: $hostPlatform, $buildMode'),
     };
   }
 
@@ -102,8 +106,10 @@ class FlutterpiArtifactPaths {
   }) {
     final targetDirName = getTargetDirName(flutterPackTargetPlatform);
     final hostDirName = getHostDirName(hostPlatform);
-    final engineFileName = getEngineFilename(buildMode, unoptimized: unoptimized);
-    final dest = Source.pattern('{CACHE_DIR}/artifacts/$artifactSubDir/$targetDirName/$hostDirName/$engineFileName');
+    final engineFileName =
+        getEngineFilename(buildMode, unoptimized: unoptimized);
+    final dest = Source.pattern(
+        '{CACHE_DIR}/artifacts/$artifactSubDir/$targetDirName/$hostDirName/$engineFileName');
     return dest;
   }
 }
@@ -198,7 +204,9 @@ class CopyFlutterpiEngine extends Target {
 
     _artifactPaths
         .getEngine(
-          engineCacheDir: environment.cacheDir.childDirectory('artifacts').childDirectory('engine'),
+          engineCacheDir: environment.cacheDir
+              .childDirectory('artifacts')
+              .childDirectory('engine'),
           hostPlatform: _hostPlatform,
           flutterPackTargetPlatform: flutterPackTargetPlatform,
           buildMode: _buildMode,
@@ -228,7 +236,8 @@ class CopyIcudtl extends Target {
 
   @override
   Future<void> build(Environment environment) async {
-    final icudtl = environment.fileSystem.file(environment.artifacts.getArtifactPath(Artifact.icuData));
+    final icudtl = environment.fileSystem
+        .file(environment.artifacts.getArtifactPath(Artifact.icuData));
     final outputFile = environment.outputDir.childFile('icudtl.dat');
     icudtl.copySync(outputFile.path);
   }
@@ -278,7 +287,8 @@ class ProfileBundleFlutterpiAssets extends CompositeTarget {
   final FlutterpiTargetPlatform flutterPackTargetPlatform;
 
   @override
-  String get name => 'profile_bundle_flutter_pack_${flutterPackTargetPlatform.shortName}_assets';
+  String get name =>
+      'profile_bundle_flutter_pack_${flutterPackTargetPlatform.shortName}_assets';
 }
 
 class ReleaseBundleFlutterpiAssets extends CompositeTarget {
@@ -301,7 +311,8 @@ class ReleaseBundleFlutterpiAssets extends CompositeTarget {
   final FlutterpiTargetPlatform flutterPackTargetPlatform;
 
   @override
-  String get name => 'release_bundle_flutter_pack_${flutterPackTargetPlatform.shortName}_assets';
+  String get name =>
+      'release_bundle_flutter_pack_${flutterPackTargetPlatform.shortName}_assets';
 }
 
 Future<void> buildFlutterpiBundle({
@@ -333,7 +344,9 @@ Future<void> buildFlutterpiBundle({
     buildDir: project.dartTool.childDirectory('flutter_build'),
     cacheDir: globals.cache.getRoot(),
     flutterRootDir: globals.fs.directory(Cache.flutterRoot),
-    engineVersion: globals.artifacts!.isLocalEngine ? null : globals.flutterVersion.engineRevision,
+    engineVersion: globals.artifacts!.isLocalEngine
+        ? null
+        : globals.flutterVersion.engineRevision,
     defines: <String, String>{
       // used by the KernelSnapshot target
       kTargetPlatform: getNameForTargetPlatform(TargetPlatform.linux_arm64),
@@ -457,8 +470,14 @@ class FlutterpiCachedGenSnapshotArtifacts implements Artifacts {
     const linux_x64 = HostPlatform.linux_x64;
 
     final subdir = switch ((_flutterPackTargetPlatform, hostPlatform)) {
-      (genericArmv7, linux_x64) => const ['flutterpack-armv7-generic', 'linux-x64'],
-      (genericAArch64, linux_x64) => const ['flutterpack-aarch64-generic', 'linux-x64'],
+      (genericArmv7, linux_x64) => const [
+          'flutterpack-armv7-generic',
+          'linux-x64'
+        ],
+      (genericAArch64, linux_x64) => const [
+          'flutterpack-aarch64-generic',
+          'linux-x64'
+        ],
       (genericX64, linux_x64) => const ['flutterpack-x64-generic', 'linux-x64'],
       (pi4, linux_x64) => const ['flutterpack-pi4', 'linux-x64'],
       (pi4_64, linux_x64) => const ['flutterpack-pi4-64', 'linux-x64'],
@@ -468,13 +487,16 @@ class FlutterpiCachedGenSnapshotArtifacts implements Artifacts {
           'Unsupported target platform & host platform combination: $_flutterPackTargetPlatform, $hostPlatform'),
     };
 
-    final genSnapshotFilename = switch ((_operatingSystemUtils.hostPlatform, buildMode)) {
+    final genSnapshotFilename =
+        switch ((_operatingSystemUtils.hostPlatform, buildMode)) {
       (linux_x64, BuildMode.profile) => 'gen_snapshot_linux_x64_profile',
       (linux_x64, BuildMode.release) => 'gen_snapshot_linux_x64_release',
-      _ => throw UnsupportedError('Unsupported host platform & build mode combinations: $hostPlatform, $buildMode'),
+      _ => throw UnsupportedError(
+          'Unsupported host platform & build mode combinations: $hostPlatform, $buildMode'),
     };
 
-    return _fileSystem.path.joinAll([engineDir, ...subdir, genSnapshotFilename]);
+    return _fileSystem.path
+        .joinAll([engineDir, ...subdir, genSnapshotFilename]);
   }
 
   @override
@@ -484,7 +506,8 @@ class FlutterpiCachedGenSnapshotArtifacts implements Artifacts {
     BuildMode? mode,
     EnvironmentType? environmentType,
   }) {
-    if (artifact == Artifact.genSnapshot && (mode == BuildMode.profile || mode == BuildMode.release)) {
+    if (artifact == Artifact.genSnapshot &&
+        (mode == BuildMode.profile || mode == BuildMode.release)) {
       return _getGenSnapshotPath(mode!);
     }
     return parent.getArtifactPath(
@@ -496,7 +519,8 @@ class FlutterpiCachedGenSnapshotArtifacts implements Artifacts {
   }
 
   @override
-  String getEngineType(TargetPlatform platform, [BuildMode? mode]) => parent.getEngineType(platform, mode);
+  String getEngineType(TargetPlatform platform, [BuildMode? mode]) =>
+      parent.getEngineType(platform, mode);
 
   @override
   bool get isLocalEngine => parent.isLocalEngine;
@@ -513,19 +537,22 @@ class BuildCommand extends Command<int> {
 
   BuildCommand() {
     argParser
-      ..addSeparator('Runtime mode options (Defaults to debug. At most one can be specified)')
+      ..addSeparator(
+          'Runtime mode options (Defaults to debug. At most one can be specified)')
       ..addFlag('debug', negatable: false, help: 'Build for debug mode.')
       ..addFlag('profile', negatable: false, help: 'Build for profile mode.')
       ..addFlag('release', negatable: false, help: 'Build for release mode.')
       ..addFlag(
         'debug-unoptimized',
         negatable: false,
-        help: 'Build for debug mode and use unoptimized engine. (For stepping through engine code)',
+        help:
+            'Build for debug mode and use unoptimized engine. (For stepping through engine code)',
       )
       ..addSeparator('Build options')
       ..addFlag(
         'tree-shake-icons',
-        help: 'Tree shake icon fonts so that only glyphs used by the application remain.',
+        help:
+            'Tree shake icon fonts so that only glyphs used by the application remain.',
       )
       ..addSeparator('Target options')
       ..addOption(
@@ -550,7 +577,8 @@ class BuildCommand extends Command<int> {
         allowedHelp: {
           'generic':
               'Don\'t use a tuned engine. The generic engine will work on all CPUs of the specified architecture.',
-          'rk3399': 'Use a rockpi4b tuned engine. Compatible with arm and arm64. (-mcpu=cortex-a53 -mtune=cortex-a53)',
+          'rk3399':
+              'Use a rockpi4b tuned engine. Compatible with arm and arm64. (-mcpu=cortex-a53 -mtune=cortex-a53)',
           'pi4':
               'Use a Raspberry Pi 4 tuned engine. Compatible with arm and arm64. (-mcpu=cortex-a72+nocrypto -mtune=cortex-a72)',
         },
@@ -605,13 +633,28 @@ class BuildCommand extends Command<int> {
       debugUnopt: results['debug-unoptimized']
     )) {
       // single flag was specified.
-      (debug: true, profile: false, release: false, debugUnopt: false) => (BuildMode.debug, false),
-      (debug: false, profile: true, release: false, debugUnopt: false) => (BuildMode.profile, false),
-      (debug: false, profile: false, release: true, debugUnopt: false) => (BuildMode.release, false),
-      (debug: false, profile: false, release: false, debugUnopt: true) => (BuildMode.debug, true),
+      (debug: true, profile: false, release: false, debugUnopt: false) => (
+          BuildMode.debug,
+          false
+        ),
+      (debug: false, profile: true, release: false, debugUnopt: false) => (
+          BuildMode.profile,
+          false
+        ),
+      (debug: false, profile: false, release: true, debugUnopt: false) => (
+          BuildMode.release,
+          false
+        ),
+      (debug: false, profile: false, release: false, debugUnopt: true) => (
+          BuildMode.debug,
+          true
+        ),
 
       // default case if no flags were specified.
-      (debug: false, profile: false, release: false, debugUnopt: false) => (BuildMode.debug, false),
+      (debug: false, profile: false, release: false, debugUnopt: false) => (
+          BuildMode.debug,
+          false
+        ),
 
       // more than a single flag has been specified.
       _ => throw UsageException(
@@ -676,19 +719,23 @@ class BuildCommand extends Command<int> {
                   BuildMode.debug,
                   null,
                   trackWidgetCreation: true,
-                  treeShakeIcons: parsed.treeShakeIcons ?? BuildInfo.debug.treeShakeIcons,
+                  treeShakeIcons:
+                      parsed.treeShakeIcons ?? BuildInfo.debug.treeShakeIcons,
                 ),
               BuildMode.profile => BuildInfo(
                   BuildMode.profile,
                   null,
-                  treeShakeIcons: parsed.treeShakeIcons ?? BuildInfo.profile.treeShakeIcons,
+                  treeShakeIcons:
+                      parsed.treeShakeIcons ?? BuildInfo.profile.treeShakeIcons,
                 ),
               BuildMode.release => BuildInfo(
                   BuildMode.release,
                   null,
-                  treeShakeIcons: parsed.treeShakeIcons ?? BuildInfo.release.treeShakeIcons,
+                  treeShakeIcons:
+                      parsed.treeShakeIcons ?? BuildInfo.release.treeShakeIcons,
                 ),
-              _ => throw UnsupportedError('Build mode ${parsed.buildMode} is not supported.'),
+              _ => throw UnsupportedError(
+                  'Build mode ${parsed.buildMode} is not supported.'),
             },
 
             // for `--debug-unoptimized` build mode
@@ -699,7 +746,8 @@ class BuildCommand extends Command<int> {
             globals.printError(e.message!);
           }
 
-          return exitWithHooks(e.exitCode ?? 1, shutdownHooks: globals.shutdownHooks);
+          return exitWithHooks(e.exitCode ?? 1,
+              shutdownHooks: globals.shutdownHooks);
         }
       },
     );

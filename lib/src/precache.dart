@@ -33,7 +33,8 @@ class PrecacheCommand extends Command<int> {
   String get name => 'precache';
 
   @override
-  String get description => 'Populate the flutter_pack\'s cache of binary artifacts.';
+  String get description =>
+      'Populate the flutter_pack\'s cache of binary artifacts.';
 
   ArtifactsGenerator getArtifacts() {
     return () => CachedArtifacts(
@@ -68,7 +69,8 @@ class PrecacheCommand extends Command<int> {
             globals.printError(e.message!);
           }
 
-          return exitWithHooks(e.exitCode ?? 1, shutdownHooks: globals.shutdownHooks);
+          return exitWithHooks(e.exitCode ?? 1,
+              shutdownHooks: globals.shutdownHooks);
         }
       },
     );

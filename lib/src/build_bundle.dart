@@ -9,8 +9,10 @@ import 'package:file/file.dart';
 import 'create.dart';
 import 'precache.dart';
 import 'build.dart';
+import 'clean.dart';
 
-Never exitWithUsage(ArgParser parser, {String? errorMessage, int exitCode = 1}) {
+Never exitWithUsage(ArgParser parser,
+    {String? errorMessage, int exitCode = 1}) {
   if (errorMessage != null) {
     print(errorMessage);
   }
@@ -33,6 +35,7 @@ Future<void> main(List<String> args) async {
   runner.addCommand(BuildCommand());
   runner.addCommand(PrecacheCommand());
   runner.addCommand(CreatePackageCommand());
+  runner.addCommand(cleanCacheCommand());
 
   runner.argParser
     ..addSeparator('Other options')
