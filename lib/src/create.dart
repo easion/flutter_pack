@@ -124,7 +124,7 @@ class CreatePackageCommand extends Command<int> {
     }
   }
 
-  void copyMakefileToProjectDir(Directory cachedir, Directory projectDir, String filename) {
+  void copyFileToProjectDir(Directory cachedir, Directory projectDir, String filename) {
     final cachedMakefile = io.File(path.join(cachedir.path, filename));
     final projectMakefile = io.File(path.join(projectDir.path, filename));
 
@@ -143,7 +143,7 @@ class CreatePackageCommand extends Command<int> {
   }
 
   String replaceUnderscoreWithDash(String input) {
-    return input.replaceAll(RegExp(r'_'), '-');
+    return input.replaceAll(RegExp(r'_'), '.');
   }
 
   Future<void> setFileExecutable(String filePath) async {
@@ -222,9 +222,20 @@ class CreatePackageCommand extends Command<int> {
             }
           }
 
-          copyMakefileToProjectDir(cachedir, projectDir, 'Makefile');
+          copyFileToProjectDir(cachedir, projectDir, 'Makefile');
           final projname = replaceUnderscoreWithDash(projectName);
-          String content = 'APPNAME=${projname}\r\nAPPVERSION=1.0\r\n';
+		  final debugIp = '192.168.16.136';
+		  final debugPort = '22';
+		  final projVer = '1.0';
+
+		  String content = '''
+			APPNAME=${projname}
+			APPVERSION=${projVer}
+			DEBUG_IP=${debugIp}
+			DEBUG_PORT=${debugPort}  
+			DEBUG_USER=root
+			DEBUG_PASSWORD=root
+			''';
           writeToFile('${projectDir.path}/gix/build_config.mak', content);
           //final Directory eLinuxTemplates = globals.fs.directory(Cache.flutterRoot);
           //print("------eLinuxTemplates DIR: -${eLinuxTemplates.path}------");
